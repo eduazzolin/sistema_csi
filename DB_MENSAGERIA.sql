@@ -1,0 +1,44 @@
+-- Desabilitar SQL_SAFE_UPDATES para evitar problemas com atualizações perigosas
+SET SQL_SAFE_UPDATES = 0;
+-- Dropar o banco de dados se ele já existir
+DROP DATABASE IF EXISTS DB_MENSAGERIA;
+-- Criar um novo banco de dados chamado DB_MENSAGERIA
+CREATE DATABASE DB_MENSAGERIA;
+-- Usar o banco de dados recém-criado
+USE DB_MENSAGERIA;
+-- Criar a tabela USUARIO
+CREATE TABLE DB_MENSAGERIA.USUARIO (
+    ID_USUARIO INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    TIPO_DE_USUARIO INTEGER NOT NULL,
+    NOME_USUARIO VARCHAR(20) NOT NULL UNIQUE,
+    SENHA VARCHAR(40) NOT NULL
+);
+-- Criar a tabela MENSAGEM
+CREATE TABLE DB_MENSAGERIA.MENSAGEM (
+    ID_MENSAGEM INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ID_REMETENTE INTEGER NOT NULL,
+    ID_DESTINATARIO INTEGER NOT NULL,
+    MENSAGEM_TITULO VARCHAR(55) NOT NULL,
+    MENSAGEM_CORPO TEXT,
+    CONSTRAINT FK_ID_REMETENTE FOREIGN KEY (ID_REMETENTE) REFERENCES USUARIO(ID_USUARIO) ON DELETE CASCADE,
+    CONSTRAINT FK_ID_DESTINATARIO FOREIGN KEY (ID_DESTINATARIO) REFERENCES USUARIO(ID_USUARIO) ON DELETE CASCADE
+);
+
+-- Inserir valores na tabela USUARIO
+INSERT INTO DB_MENSAGERIA.USUARIO (TIPO_DE_USUARIO, NOME_USUARIO, SENHA) VALUES
+    (1, 'usuario1', 'senha1'),
+    (2, 'usuario2', 'senha2'),
+    (1, 'usuario3', 'senha3'),
+    (2, 'usuario4', 'senha4'),
+    (1, 'usuario5', 'senha5');
+    
+ -- Inserir valores na tabela MENSAGEM
+INSERT INTO DB_MENSAGERIA.MENSAGEM (ID_REMETENTE, ID_DESTINATARIO, MENSAGEM_TITULO, MENSAGEM_CORPO) VALUES
+    (1, 2, 'Hello!', 'Hello World!'),
+    (2, 1, 'Título 1', 'Corpo da mensagem 1'),
+    (3, 4, 'Título 2', 'Corpo da mensagem 2'),
+    (4, 3, 'Título 3', 'Corpo da mensagem 3'),
+    (5, 2, 'Título 4', 'Corpo da mensagem 4');
+    
+    SELECT * FROM MENSAGEM;
+
