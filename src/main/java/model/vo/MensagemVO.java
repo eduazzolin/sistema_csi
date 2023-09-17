@@ -4,7 +4,23 @@ public class MensagemVO {
 	private int idMensagem;
 	private int idRemetente;
 	private int idDestinatario;
+	private String mensagemTitulo;
+	private String mensagemCorpo;
 
+	public MensagemVO() {
+		super();
+	}
+
+	public MensagemVO(int idMensagem, int idRemetente, int idDestinatario, String mensagemTitulo,
+			String mensagemCorpo) {
+		super();
+		this.idMensagem = idMensagem;
+		this.idRemetente = idRemetente;
+		this.idDestinatario = idDestinatario;
+		this.mensagemTitulo = mensagemTitulo;
+		this.mensagemCorpo = mensagemCorpo;
+	}
+	
 	public int getIdMensagem() {
 		return idMensagem;
 	}
@@ -45,22 +61,6 @@ public class MensagemVO {
 		this.mensagemCorpo = mensagemCorpo;
 	}
 
-	private String mensagemTitulo;
-	private String mensagemCorpo;
 
-	public MensagemVO() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public MensagemVO(int idMensagem, int idRemetente, int idDestinatario, String mensagemTitulo,
-			String mensagemCorpo) {
-		super();
-		this.idMensagem = idMensagem;
-		this.idRemetente = idRemetente;
-		this.idDestinatario = idDestinatario;
-		this.mensagemTitulo = mensagemTitulo;
-		this.mensagemCorpo = mensagemCorpo;
-	}
 
 }

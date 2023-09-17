@@ -8,7 +8,6 @@ public class UsuarioVO {
 
 	public UsuarioVO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public UsuarioVO(int idUsuario, int tipoDeUsuario, String nomeUsuario, String senha) {
