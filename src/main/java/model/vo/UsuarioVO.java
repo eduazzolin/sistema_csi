@@ -2,7 +2,6 @@ package model.vo;
 
 public class UsuarioVO {
 	private int idUsuario;
-	private int tipoDeUsuario;
 	private String nomeUsuario;
 	private String senha;
 
@@ -10,10 +9,9 @@ public class UsuarioVO {
 		super();
 	}
 
-	public UsuarioVO(int idUsuario, int tipoDeUsuario, String nomeUsuario, String senha) {
+	public UsuarioVO(int idUsuario,  String nomeUsuario, String senha) {
 		super();
 		this.idUsuario = idUsuario;
-		this.tipoDeUsuario = tipoDeUsuario;
 		this.nomeUsuario = nomeUsuario;
 		this.senha = senha;
 	}
@@ -26,12 +24,9 @@ public class UsuarioVO {
 		this.idUsuario = idUsuario;
 	}
 
-	public int getTipoDeUsuario() {
-		return tipoDeUsuario;
-	}
-
-	public void setTipoDeUsuario(int tipoDeUsuario) {
-		this.tipoDeUsuario = tipoDeUsuario;
+	@Override
+	public String toString() {
+		return nomeUsuario;
 	}
 
 	public String getNomeUsuario() {

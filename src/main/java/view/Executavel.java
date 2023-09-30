@@ -1,41 +1,44 @@
 package view;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Scanner;
+
+import controller.MensagemController;
 import controller.UsuarioController;
+import model.vo.MensagemVO;
 import model.vo.UsuarioVO;
 
 public class Executavel {
 	private static Scanner scanner = new Scanner(System.in);
 	private static UsuarioController usuarioController = new UsuarioController();
 	private static UsuarioVO usuarioLogado = new UsuarioVO();
+	private static MensagemController mensagemController = new MensagemController();
+	private static String barra = "----------------------";
+	private static String negrito = "\u001B[1m";
+	private static String reset = "\u001B[0m";
+	private static String quebraDePagina = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 
 	public static void main(String[] args) {
+		exibirLogotipo();
 		boolean sair = false;
 
 		while (usuarioLogado.getIdUsuario() == 0) {
-			exibirLogotipo();
 			usuarioLogado = telaLoginCadastro();
 		}
 
 		while (!sair) {
-			exibirMenu();
+			exibirMenuPrincipal();
 			int escolha = scanner.nextInt();
 			scanner.nextLine(); // Limpar o buffer de entrada
 
 			switch (escolha) {
 			case 1:
-				// Implementar a funcionalidade de criar um cliente (CRUD)
+				telaCaixaDeEntrada();
 				break;
 			case 2:
-				// Implementar a funcionalidade de listar clientes (RUD)
 				break;
-			case 3:
-				// Implementar a funcionalidade de enviar mensagem
-				break;
-			case 4:
-				// Implementar a funcionalidade de listar mensagens
-				break;
-			case 5:
+			case 9:
 				sair = true;
 				break;
 			default:
@@ -46,16 +49,70 @@ public class Executavel {
 
 		System.out.println("O programa foi encerrado.");
 	}
+	
+	/**
+	 * Exibe as opções do menu principal
+	 */
+	private static void exibirMenuPrincipal() {
+		System.out.println(barra);
+		System.out.println("1. Caixa de entrada");
+		System.out.println("2. Enviar mensagem");
+		System.out.println("9. Sair");
+		System.out.print("Selecione uma opção:");
+	}
+	
+	/**
+	 * Busca todas as mensagens pelo id do destinatário as exibe em formato de lista somente com o título e ordenadas por data.
+	 * Ao selecionar uma mensagem, é exibido uma tela com a visão completa.
+	 */
+	private static void telaCaixaDeEntrada() {
+		int escolha = -1;
+		
+		while (escolha != 0) {
+			System.out.println(barra + "\nCaixa de entrada:\n");
+			
+			// buscando as mensagens:
+			ArrayList<MensagemVO> listaMensagens = mensagemController.buscarMensagensPorDestinatario(usuarioLogado.getIdUsuario());
+			int qtdeMensagem = listaMensagens.size();
+			
+			// listando todas as mensagens:
+			for (int i = 0; i < qtdeMensagem; i++) {
+				System.out.println(String.format("%" + String.valueOf(qtdeMensagem).length() + "d", (i + 1)) + ".    "
+						+ listaMensagens.get(i));
+			}
+			System.out.print("\nDigite o número da mensagem ou 0 para sair: ");
+			escolha = scanner.nextInt();
+			scanner.nextLine(); 
+			
+			// abrindo a mensagem:
+			if (escolha <= qtdeMensagem && escolha > 0) {
+				telaMensagem(listaMensagens.get(escolha - 1));
+			} 
+		}
+	}
 
-	private static void exibirLogotipo() {
-		// código ansii com um logo top
+	/**
+	 * Abre uma tela com todas as informações da mensagem
+	 * @param mensagemVO
+	 */
+	private static void telaMensagem(MensagemVO mensagemVO) {
+		System.out.println(barra+quebraDePagina);
+		System.out.println(negrito + "Data: " + reset + mensagemVO.getMensagemData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+		System.out.println(negrito + "Remetente: " + reset +  mensagemVO.getNomeRemetente());
+		System.out.println(negrito + "Destinatario: " + reset +  mensagemVO.getNomeDestinatario());
+		System.out.println(negrito + "Assunto: " + reset +  mensagemVO.getMensagemTitulo());
+		System.out.println("\"" + mensagemVO.getMensagemCorpo() + "\"");
+
+		System.out.println("\nPressione qualquer tecla para voltar");
+		scanner.nextLine();
 	}
 
 	/***
-	 * Exibe as opções de login e cadastro e encaminha 
-	 * para o controller fazer o que tem que fazer. 
-	 * @return Objeto de usuário com ID preenchido se 
-	 * tiver ocorrido tudo bem ou zerado em caso de erro.
+	 * Exibe as opções de login e cadastro e encaminha para o controller fazer o que
+	 * tem que fazer.
+	 * 
+	 * @return Objeto de usuário com ID preenchido se tiver ocorrido tudo bem ou
+	 *         zerado em caso de erro.
 	 */
 	private static UsuarioVO telaLoginCadastro() {
 		int escolha = 0;
@@ -71,29 +128,29 @@ public class Executavel {
 
 		switch (escolha) {
 		case LOGIN:
-			System.out.println("-------------\nLogin: ");
+			System.out.println(barra);
 			System.out.print("Digite o nome do usuário: ");
 			usuario.setNomeUsuario(scanner.nextLine());
 			System.out.print("Digite a senha: ");
 			usuario.setSenha(scanner.nextLine());
-//			usuario = usuarioController.efetuarLogin(usuario);
+			usuario = usuarioController.efetuarLogin(usuario);
 			if (usuario.getIdUsuario() == 0) {
-				System.out.println("Erro: Usuário ou senha incorretos!\n");
+				System.out.println("Erro: Usuário ou senha incorretos!");
 			} else {
-				System.out.println("Login efetuado com sucesso!\n");
+				System.out.println("Login efetuado com sucesso!");
 			}
 			break;
 		case CADASTRO:
-			System.out.println("-------------\nCadastro: ");
+			System.out.println(barra);
 			System.out.print("Digite o nome do usuário: ");
 			usuario.setNomeUsuario(scanner.nextLine());
 			System.out.print("Digite a senha: ");
 			usuario.setSenha(scanner.nextLine());
-//			usuario = usuarioController.cadastrarUsuario(usuario);
+			usuario = usuarioController.cadastrarUsuario(usuario);
 			if (usuario.getIdUsuario() == 0) {
-				System.out.println("Erro: Usuário já existe!\n");
+				System.out.println("Erro: Usuário já existe!");
 			} else {
-				System.out.println("Cadastro efetuado com sucesso!\n");
+				System.out.println("Cadastro efetuado com sucesso!");
 			}
 			break;
 		default:
@@ -102,12 +159,17 @@ public class Executavel {
 		return usuario;
 	}
 
-	private static void exibirMenu() {
-		System.out.println("Selecione uma opção:");
-		System.out.println("1. Criar Cliente");
-		System.out.println("2. Listar Clientes");
-		System.out.println("3. Enviar Mensagem");
-		System.out.println("4. Listar Mensagens");
-		System.out.println("5. Sair");
+	/**
+	 * printa o logotipo mto top do app 
+	 */
+	private static void exibirLogotipo() {
+		System.out.println("\r\n" + "                                                 _       \r\n"
+				+ "                                                (_)      \r\n"
+				+ "  _ __ ___   ___ _ __  ___  __ _  __ _  ___ _ __ _  __ _ \r\n"
+				+ " | '_ ` _ \\ / _ \\ '_ \\/ __|/ _` |/ _` |/ _ \\ '__| |/ _` |\r\n"
+				+ " | | | | | |  __/ | | \\__ \\ (_| | (_| |  __/ |  | | (_| |\r\n"
+				+ " |_| |_| |_|\\___|_| |_|___/\\__,_|\\__, |\\___|_|  |_|\\__,_|\r\n"
+				+ "                                  __/ |                  \r\n"
+				+ "                                 |___/                   \r");
 	}
 }
