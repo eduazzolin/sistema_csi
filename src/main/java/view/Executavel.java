@@ -74,20 +74,24 @@ public class Executavel {
 			// buscando as mensagens:
 			ArrayList<MensagemVO> listaMensagens = mensagemController.buscarMensagensPorDestinatario(usuarioLogado.getIdUsuario());
 			int qtdeMensagem = listaMensagens.size();
-			
-			// listando todas as mensagens:
-			for (int i = 0; i < qtdeMensagem; i++) {
-				System.out.println(String.format("%" + String.valueOf(qtdeMensagem).length() + "d", (i + 1)) + ".    "
-						+ listaMensagens.get(i));
+			if (qtdeMensagem > 0) {
+				// listando todas as mensagens:
+				for (int i = 0; i < qtdeMensagem; i++) {
+					System.out.println(String.format("%" + String.valueOf(qtdeMensagem).length() + "d", (i + 1)) + ".    "
+							+ listaMensagens.get(i));
+				}
+				System.out.print("\nDigite o número da mensagem ou 0 para sair: ");
+				escolha = scanner.nextInt();
+				scanner.nextLine(); 
+				
+				// abrindo a mensagem:
+				if (escolha <= qtdeMensagem && escolha > 0) {
+					telaMensagem(listaMensagens.get(escolha - 1));
+				} 
+			} else {
+				System.out.println("Caixa de entrada vazia!");
+				escolha = 0;
 			}
-			System.out.print("\nDigite o número da mensagem ou 0 para sair: ");
-			escolha = scanner.nextInt();
-			scanner.nextLine(); 
-			
-			// abrindo a mensagem:
-			if (escolha <= qtdeMensagem && escolha > 0) {
-				telaMensagem(listaMensagens.get(escolha - 1));
-			} 
 		}
 	}
 
@@ -96,14 +100,14 @@ public class Executavel {
 	 * @param mensagemVO
 	 */
 	private static void telaMensagem(MensagemVO mensagemVO) {
-		System.out.println(barra+quebraDePagina);
+		System.out.println(barra+"\n\n\n");
 		System.out.println(negrito + "Data: " + reset + mensagemVO.getMensagemData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
 		System.out.println(negrito + "Remetente: " + reset +  mensagemVO.getNomeRemetente());
 		System.out.println(negrito + "Destinatario: " + reset +  mensagemVO.getNomeDestinatario());
 		System.out.println(negrito + "Assunto: " + reset +  mensagemVO.getMensagemTitulo());
 		System.out.println("\"" + mensagemVO.getMensagemCorpo() + "\"");
 
-		System.out.println("\nPressione qualquer tecla para voltar");
+		System.out.print("\nPressione qualquer tecla para voltar\n\n\n");
 		scanner.nextLine();
 	}
 
