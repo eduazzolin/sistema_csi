@@ -13,23 +13,30 @@ public class Banco {
 	private static final String CONEXAO = "jdbc:mysql://localhost:3306/" 
 					+ BANCODADOS + "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useTimezone=true";
 	private static final String USER = "root";
-	private static final String PASSWORD = "root";
+	private static String password = "root";
 	
 	public static Connection getConnection(){
-		try {
-			Connection conn = null;
-			Class.forName(DRIVER);
-			conn = DriverManager.getConnection(CONEXAO, USER, PASSWORD);
-			return conn;
-		} catch (ClassNotFoundException e) {
-			System.out.println("Classe do Driver não foi encontrada.");
-			System.out.println("Erro: " + e.getMessage());
-			return null;
-		} catch (SQLException e) {
-			System.out.println("Erro ao obter a Connection.");
-			System.out.println("Erro: " + e.getMessage());
-			return null;
+		int retries = 2;
+		while (retries > 0) {
+			try {
+				Connection conn = null;
+				Class.forName(DRIVER);
+				conn = DriverManager.getConnection(CONEXAO, USER, password);
+				return conn;
+			} catch (ClassNotFoundException e) {
+				System.out.println("Classe do Driver não foi encontrada.");
+				System.out.println("Erro: " + e.getMessage());
+				return null;
+			} catch (SQLException e) {
+				retries--;
+				if (retries == 0) {
+					System.out.println("Erro ao obter a Connection.");
+					System.out.println("Erro: " + e.getMessage());
+				}
+				password = "admin";
+			}
 		}
+		return null;
 	}
 	
 	public static void closeConnection(Connection conn){
