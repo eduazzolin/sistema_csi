@@ -19,7 +19,7 @@ public class SegurancaController {
 
    /***
     * Gera um par de chaves
-    * @return um array composto pela chave privada e pública em forma de string
+    * @return um array composto pela chave privada e pública em forma de byte[]
     */
    public static byte[][] generateKey() {
       try {
@@ -39,7 +39,7 @@ public class SegurancaController {
    }
 
    /***
-    * criptografa a string e retorna em forma de blob
+    * criptografa a string e retorna em forma de byte[]
     * @param content mensagem a ser criptografada em String
     * @param byteKey chave pública em byte[]
     * @return byte[] mensagem criptografada
