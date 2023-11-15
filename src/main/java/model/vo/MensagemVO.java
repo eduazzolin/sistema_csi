@@ -6,95 +6,90 @@ import java.time.format.DateTimeFormatter;
 import controller.UsuarioController;
 
 public class MensagemVO {
-	private int idMensagem;
-	private int idRemetente;
-	private int idDestinatario;
-	private String mensagemTitulo;
-	private String mensagemCorpo;
-	private LocalDateTime mensagemData;
 
-	public MensagemVO() {
-		super();
-	}
+   /* atributos */
+   private int idMensagem;
+   private int idRemetente;
+   private int idDestinatario;
+   private byte[] mensagemTitulo;
+   private byte[] mensagemCorpo;
+   private LocalDateTime mensagemData;
 
-	public MensagemVO(int idMensagem, int idRemetente, int idDestinatario, String mensagemTitulo, String mensagemCorpo,
-			LocalDateTime mensagemData) {
-		super();
-		this.idMensagem = idMensagem;
-		this.idRemetente = idRemetente;
-		this.idDestinatario = idDestinatario;
-		this.mensagemTitulo = mensagemTitulo;
-		this.mensagemCorpo = mensagemCorpo;
-		this.mensagemData = mensagemData;
-	}
+   /* construtores */
+   public MensagemVO(int idMensagem, int idRemetente, int idDestinatario, byte[] mensagemTitulo, byte[] mensagemCorpo, LocalDateTime mensagemData) {
+      this.idMensagem = idMensagem;
+      this.idRemetente = idRemetente;
+      this.idDestinatario = idDestinatario;
+      this.mensagemTitulo = mensagemTitulo;
+      this.mensagemCorpo = mensagemCorpo;
+      this.mensagemData = mensagemData;
+   }
 
-	public LocalDateTime getMensagemData() {
-		return mensagemData;
-	}
+   public MensagemVO() {
+      super();
+   }
 
-	public void setMensagemData(LocalDateTime mensagemData) {
-		this.mensagemData = mensagemData;
-	}
+   /* getters e setters */
+   public byte[] getMensagemTitulo() {
+      return mensagemTitulo;
+   }
 
-	public int getIdMensagem() {
-		return idMensagem;
-	}
+   public void setMensagemTitulo(byte[] mensagemTitulo) {
+      this.mensagemTitulo = mensagemTitulo;
+   }
 
-	public void setIdMensagem(int idMensagem) {
-		this.idMensagem = idMensagem;
-	}
+   public byte[] getMensagemCorpo() {
+      return mensagemCorpo;
+   }
 
-	public int getIdRemetente() {
-		return idRemetente;
-	}
+   public void setMensagemCorpo(byte[] mensagemCorpo) {
+      this.mensagemCorpo = mensagemCorpo;
+   }
 
-	public void setIdRemetente(int idRemetente) {
-		this.idRemetente = idRemetente;
-	}
 
-	public int getIdDestinatario() {
-		return idDestinatario;
-	}
+   public LocalDateTime getMensagemData() {
+      return mensagemData;
+   }
 
-	public void setIdDestinatario(int idDestinatario) {
-		this.idDestinatario = idDestinatario;
-	}
+   public void setMensagemData(LocalDateTime mensagemData) {
+      this.mensagemData = mensagemData;
+   }
 
-	public String getMensagemTitulo() {
-		return mensagemTitulo;
-	}
+   public int getIdMensagem() {
+      return idMensagem;
+   }
 
-	public void setMensagemTitulo(String mensagemTitulo) {
-		this.mensagemTitulo = mensagemTitulo;
-	}
+   public void setIdMensagem(int idMensagem) {
+      this.idMensagem = idMensagem;
+   }
 
-	public String getMensagemCorpo() {
-		return mensagemCorpo;
-	}
+   public int getIdRemetente() {
+      return idRemetente;
+   }
 
-	public void setMensagemCorpo(String mensagemCorpo) {
-		this.mensagemCorpo = mensagemCorpo;
-	}
+   public void setIdRemetente(int idRemetente) {
+      this.idRemetente = idRemetente;
+   }
 
-	public String getNomeRemetente() {
-		UsuarioController usuarioController = new UsuarioController();
-		return usuarioController.buscarUsuarioPorId(idRemetente).getNomeUsuario();
-	}
-	public String getNomeDestinatario() {
-		UsuarioController usuarioController = new UsuarioController();
-		return usuarioController.buscarUsuarioPorId(idDestinatario).getNomeUsuario();
-	}
-	
-	/**
-	 * Este toString é usado na tela da caixa de entrada
-	 */
-	@Override
-	public String toString() {
-		String remetente = this.getNomeRemetente();
-		return String.format("%-20s    %-12s    %s",
-				mensagemTitulo.length() > 20 ? mensagemTitulo.substring(0, 17) + "..." : mensagemTitulo,
-				remetente.length() > 12 ? remetente.substring(0, 9) + "..." : remetente,
-				mensagemData.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-	}
+   public int getIdDestinatario() {
+      return idDestinatario;
+   }
+
+   public void setIdDestinatario(int idDestinatario) {
+      this.idDestinatario = idDestinatario;
+   }
+
+
+   /* métodos */
+   public String getNomeRemetente() {
+      UsuarioController usuarioController = new UsuarioController();
+      return usuarioController.buscarUsuarioPorId(idRemetente).getNomeUsuario();
+   }
+
+   public String getNomeDestinatario() {
+      UsuarioController usuarioController = new UsuarioController();
+      return usuarioController.buscarUsuarioPorId(idDestinatario).getNomeUsuario();
+   }
+
 
 }

@@ -12,111 +12,117 @@ import model.vo.UsuarioVO;
 
 public class UsuarioDAO {
 
-	public UsuarioDAO() {
-		super();
-	}
+   public UsuarioDAO() {
+      super();
+   }
 
-	public UsuarioVO inserirUsuario(UsuarioVO usuario) {
-		
-		String sql = "INSERT INTO DB_MENSAGERIA.USUARIO (NOME_USUARIO, SENHA) VALUES (?, ?)";
-		Connection conexao = Banco.getConnection();
-		
-		ResultSet resultado = null;
-		try (PreparedStatement statement = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-			statement.setString(1, usuario.getNomeUsuario());
-			statement.setString(2, usuario.getSenha());
-			statement.execute();
-			resultado = statement.getGeneratedKeys();
-			if (resultado.next()) {
-				usuario.setIdUsuario(Integer.parseInt(resultado.getString(1)));
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		} finally {
-			Banco.closeConnection(conexao);
-		}
-		return usuario;
-	}
+   /***
+    * Insere um novo usuário no banco de dados
+    * @param usuario
+    * @return UsuarioVO com id preenchido
+    */
+   public UsuarioVO inserirUsuario(UsuarioVO usuario) {
 
-	public UsuarioVO login(UsuarioVO usuario) {
-		String sql = "SELECT ID_USUARIO FROM DB_MENSAGERIA.USUARIO WHERE NOME_USUARIO = ? AND SENHA = ?";
-		Connection conexao = Banco.getConnection();
-		try (PreparedStatement statement = conexao.prepareStatement(sql)) {
-			statement.setString(1, usuario.getNomeUsuario());
-			statement.setString(2, usuario.getSenha());
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (resultSet.next()) {
-					usuario.setIdUsuario(resultSet.getInt("ID_USUARIO"));
-				}
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		} finally {
-			Banco.closeConnection(conexao);
-		}
-		return usuario;
-	}
+      String sql = "INSERT INTO DB_MENSAGERIA.USUARIO (NOME_USUARIO, SENHA, PRIVATE_KEY, PUBLIC_KEY) VALUES (?, ?, ?, ?)";
+      Connection conexao = Banco.getConnection();
 
-	public UsuarioVO buscarUsuarioPorId(int id) throws SQLException {
-		String sql = "SELECT * FROM DB_MENSAGERIA.USUARIO WHERE ID_USUARIO = ?";
-		Connection conexao = Banco.getConnection();
-		try (PreparedStatement statement = conexao.prepareStatement(sql)) {
-			statement.setInt(1, id);
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (resultSet.next()) {
-					int idUsuario = resultSet.getInt("ID_USUARIO");
-					String nomeUsuario = resultSet.getString("NOME_USUARIO");
-					String senha = resultSet.getString("SENHA");
-					return new UsuarioVO(idUsuario, nomeUsuario, senha);
-				}
-			} finally {
-				Banco.closeConnection(conexao);
-			}
-		}
-		return null;
-	}
+      ResultSet resultado = null;
+      try (PreparedStatement statement = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+         statement.setString(1, usuario.getNomeUsuario());
+         statement.setString(2, usuario.getSenha());
+         statement.setBytes(3, usuario.getChavePrivada());
+         statement.setBytes(4, usuario.getChavePublica());
+         statement.execute();
+         resultado = statement.getGeneratedKeys();
+         if (resultado.next()) {
+            usuario.setIdUsuario(Integer.parseInt(resultado.getString(1)));
+         }
+      } catch (SQLException e) {
+         System.out.println(e.getMessage());
+      } finally {
+         Banco.closeConnection(conexao);
+      }
+      return usuario;
+   }
 
-	public List<UsuarioVO> listarUsuarios() throws SQLException {
-		List<UsuarioVO> usuarios = new ArrayList<>();
-		String sql = "SELECT * FROM DB_MENSAGERIA.USUARIO";
-		Connection conexao = Banco.getConnection();
-		try (PreparedStatement statement = conexao.prepareStatement(sql)) {
-			try (ResultSet resultSet = statement.executeQuery()) {
-				while (resultSet.next()) {
-					int idUsuario = resultSet.getInt("ID_USUARIO");
-					String nomeUsuario = resultSet.getString("NOME_USUARIO");
-					String senha = resultSet.getString("SENHA");
-					usuarios.add(new UsuarioVO(idUsuario, nomeUsuario, senha));
-				}
-			}
-		} finally {
-			Banco.closeConnection(conexao);
-		}
-		return usuarios;
-	}
+   /***
+    * Busca um usuário no banco de dados através do nome de usuário e senha
+    * @param usuario
+    * @return UsuarioVO com id preenchido se encontrado ou zerado se não encontrado
+    */
+   public UsuarioVO login(UsuarioVO usuario) {
+      String sql = "SELECT * FROM DB_MENSAGERIA.USUARIO WHERE NOME_USUARIO = ? AND SENHA = ?";
+      Connection conexao = Banco.getConnection();
+      try (PreparedStatement statement = conexao.prepareStatement(sql)) {
+         statement.setString(1, usuario.getNomeUsuario());
+         statement.setString(2, usuario.getSenha());
+         try (ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+               usuario.setIdUsuario(resultSet.getInt("ID_USUARIO"));
+               usuario.setChavePrivada(resultSet.getBytes("PRIVATE_KEY"));
+               usuario.setChavePublica(resultSet.getBytes("PUBLIC_KEY"));
+            }
+         }
+      } catch (SQLException e) {
+         System.out.println(e.getMessage());
+      } finally {
+         Banco.closeConnection(conexao);
+      }
+      return usuario;
+   }
 
-	public void atualizarUsuario(UsuarioVO usuario) throws SQLException {
-		String sql = "UPDATE DB_MENSAGERIA.USUARIO SET NOME_USUARIO = ?, SENHA = ? WHERE ID_USUARIO = ?";
-		Connection conexao = Banco.getConnection();
-		try (PreparedStatement statement = conexao.prepareStatement(sql)) {
-			statement.setString(1, usuario.getNomeUsuario());
-			statement.setString(2, usuario.getSenha());
-			statement.setInt(3, usuario.getIdUsuario());
-			statement.executeUpdate();
-		} finally {
-			Banco.closeConnection(conexao);
-		}
-	}
+   /***
+    * Busca um usuário no banco de dados através do id
+    * @param id
+    * @return UsuarioVO com id preenchido se encontrado
+    * @throws SQLException
+    */
+   public UsuarioVO buscarUsuarioPorId(int id) throws SQLException {
+      String sql = "SELECT * FROM DB_MENSAGERIA.USUARIO WHERE ID_USUARIO = ?";
+      Connection conexao = Banco.getConnection();
+      try (PreparedStatement statement = conexao.prepareStatement(sql)) {
+         statement.setInt(1, id);
+         try (ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+               int idUsuario = resultSet.getInt("ID_USUARIO");
+               String nomeUsuario = resultSet.getString("NOME_USUARIO");
+               String senha = resultSet.getString("SENHA");
+               byte[] chavePublica = resultSet.getBytes("PUBLIC_KEY");
+               byte[] chavePrivada = resultSet.getBytes("PRIVATE_KEY");
+               return new UsuarioVO(idUsuario, nomeUsuario, senha, chavePrivada, chavePublica);
+            }
+         } finally {
+            Banco.closeConnection(conexao);
+         }
+      }
+      return null;
+   }
 
-	public void excluirUsuario(int id) throws SQLException {
-		String sql = "DELETE FROM DB_MENSAGERIA.USUARIO WHERE ID_USUARIO = ?";
-		Connection conexao = Banco.getConnection();
-		try (PreparedStatement statement = conexao.prepareStatement(sql)) {
-			statement.setInt(1, id);
-			statement.executeUpdate();
-		} finally {
-			Banco.closeConnection(conexao);
-		}
-	}
-
+   /***
+    * Busca usuário pelo username
+    * @param usuarioDestinatario
+    * @return UsuarioVO completo se encontrado
+    * @throws SQLException
+    */
+   public UsuarioVO buscarUsuarioPorUsername(String usuarioDestinatario) throws SQLException {
+      String sql = "SELECT * FROM DB_MENSAGERIA.USUARIO WHERE NOME_USUARIO = ?";
+      Connection conexao = Banco.getConnection();
+      try (PreparedStatement statement = conexao.prepareStatement(sql)) {
+         statement.setString(1, usuarioDestinatario);
+         try (ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+               int idUsuario = resultSet.getInt("ID_USUARIO");
+               String nomeUsuario = resultSet.getString("NOME_USUARIO");
+               String senha = resultSet.getString("SENHA");
+               byte[] chavePublica = resultSet.getBytes("PUBLIC_KEY");
+               byte[] chavePrivada = resultSet.getBytes("PRIVATE_KEY");
+               return new UsuarioVO(idUsuario, nomeUsuario, senha, chavePrivada, chavePublica);
+            } else {
+               throw new SQLException("Usuario não encontrado!");
+            }
+         } finally {
+            Banco.closeConnection(conexao);
+         }
+      }
+   }
 }
